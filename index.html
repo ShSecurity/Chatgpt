@@ -10,9 +10,12 @@
     <input type="text" id="chat-input" placeholder="Escribe un mensaje...">
     <button id="chat-submit">Enviar</button>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/@openai/api@0.5.1/dist/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    const chatbot = new OpenAI('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'); // Reemplaza con tu clave de API de OpenAI
+    const chatbot = {
+      url: 'https://api.openai.com/v1',
+      key: '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' // Reemplaza con tu clave de API de OpenAI
+    };
     const promptPrefix = 'Usuario: ';
     const responsePrefix = 'Chatbot: ';
 
@@ -24,16 +27,27 @@
       const userInput = chatInput.value;
       if (userInput) {
         logMessage(userInput, promptPrefix);
-        const botResponse = await chatbot.complete({
-          prompt: userInput,
-          maxTokens: 50,
-          n: 1,
-          stop: '\n',
-        });
-        logMessage(botResponse.choices[0].text.trim(), responsePrefix);
+        const botResponse = await getBotResponse(userInput);
+        logMessage(botResponse.data.choices[0].text.trim(), responsePrefix);
       }
       chatInput.value = '';
     });
+
+    async function getBotResponse(userInput) {
+      const requestBody = {
+        prompt: userInput,
+        max_tokens: 50,
+        n: 1,
+        stop: '\n',
+      };
+      const response = await axios.post(`${chatbot.url}/completions`, requestBody, {
+        headers: {
+          'Authorization': `Bearer ${chatbot.key}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response;
+    }
 
     function logMessage(message, prefix) {
       const messageNode = document.createElement('div');
