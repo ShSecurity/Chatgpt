@@ -1,4 +1,4 @@
-const chatbot = new OpenAI('TU_CLAVE_DE_API_DE_OPENAI'); // Reemplaza con tu clave de API de OpenAI
+const chatbot = new OpenAI('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'); // Reemplaza con tu clave de API de OpenAI
 const promptPrefix = 'Usuario: ';
 const responsePrefix = 'Chatbot: ';
 
